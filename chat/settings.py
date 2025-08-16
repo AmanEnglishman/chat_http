@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'users',
 
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +130,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.JWTAuthentication',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),      # жизнь access-токена
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),         # жизнь refresh-токена
+    'ROTATE_REFRESH_TOKENS': True,                       # обновление refresh при использовании
+    'BLACKLIST_AFTER_ROTATION': True,                    # заносить старые refresh в черный список
+    'AUTH_HEADER_TYPES': ('Bearer',),                    # Authorization: Bearer <token>
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 }
