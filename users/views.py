@@ -2,7 +2,8 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 
@@ -22,6 +23,15 @@ class LoginView(APIView):
             username=serializer.data['username'],
             password=serializer.data['password']
         )
+        if user:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'message': 'Login Successful'
+            }, status=status.HTTP_200_OK)
+        return Response({'error: Login Failed'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
